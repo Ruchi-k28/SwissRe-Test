@@ -20,42 +20,62 @@ public class Main {
 
 			var violations = OrgAnalyzer.evaluateManagerSalaries(employees);
 			var tooLong = OrgAnalyzer.findTooLongReportingLines(employees);
-
-			// Console printouts
-			System.out.println("== Managers earning LESS than they should ==");
+			System.out.println();
+			System.out.println(
+					"=================================::::::::::::::::::::::::::::::::|||| ORGANIZATION SALARY ANALYSIS REPORT ||||::::::::::::::::::::::::::::::::=================================");
+			System.out.printf("\n%s%n", "*".repeat(85 + 1 + 8 + 1 + 15 * 5 + 6));
+			final String title = "\n				    | Managers earning LESS than they should |						";
+			final String headerFmt = "%-8s %-28s %15s %15s %15s %15s %15s%n";
+			final String rowFmt = "%-8s %-28s %,15.2f %,15.2f %,15.2f %,15.2f %,15.2f%n";
+			System.out.println(title);
+			System.out.printf("%s%n", "-".repeat(28 + 1 + 8 + 1 + 15 * 5 + 6));
+			System.out.printf(headerFmt, "ID", "Manager", "Current", "Avg Sub", "Min(120%)", "Max(150%)",
+					"Underpaid By");
+			System.out.printf("%s%n", "-".repeat(28 + 1 + 8 + 1 + 15 * 5 + 6));
 			boolean anyUnder = false;
 			for (var v : violations) {
 				if (v.isUnderpaid) {
 					anyUnder = true;
-					System.out.printf("%s (id=%s): avg sub salary=%.2f, short by=%.2f%n", v.manager.getFullName(),
-							v.manager.getId(), v.averageSubSalary, v.delta);
+					System.out.printf(rowFmt, v.manager.getId(), v.manager.getFullName(), v.manager.getSalary(),
+							v.averageSubSalary, 1.2 * v.averageSubSalary, 1.5 * v.averageSubSalary, v.delta);
 				}
 			}
 			if (!anyUnder)
 				System.out.println("None");
 
-			System.out.println();
-			System.out.println("== Managers earning MORE than they should ==");
+			final String title1 = "\n				    | Managers earning MORE than they should |						";
+			System.out.printf("\n%s%n", "*".repeat(85 + 1 + 8 + 1 + 15 * 5 + 6));
+			System.out.println(title1);
+			System.out.printf("%s%n", "-".repeat(28 + 1 + 8 + 1 + 15 * 5 + 6));
+			System.out.printf(headerFmt, "ID", "Manager", "Current", "Avg Sub", "Min(120%)", "Max(150%)",
+					"Overpaid By");
+			System.out.printf("%s%n", "-".repeat(28 + 1 + 8 + 1 + 15 * 5 + 6));
 			boolean anyOver = false;
 			for (var v : violations) {
 				if (!v.isUnderpaid) {
 					anyOver = true;
-					System.out.printf("%s (id=%s): avg sub salary=%.2f, excess by=%.2f%n", v.manager.getFullName(),
-							v.manager.getId(), v.averageSubSalary, v.delta);
+					System.out.printf(rowFmt, v.manager.getId(), v.manager.getFullName(), v.manager.getSalary(),
+							v.averageSubSalary, 1.2 * v.averageSubSalary, 1.5 * v.averageSubSalary, v.delta);
 				}
 			}
 			if (!anyOver)
 				System.out.println("None");
 
-			System.out.println();
-			System.out.println("== Employees with too-long reporting line (> 4 managers between them and CEO) ==");
+			final String tlTitle = "\n| Employees with TOO-LONG reporting line (> 4 managers between them and CEO) |";
+			final String tlHeaderFmt = "%-10s %-30s %22s %14s%n";
+			final String tlRowFmt = "%-10s %-30s %22d %14d%n";
+			System.out.printf("\n%s%n", "*".repeat(85 + 1 + 8 + 1 + 15 * 5 + 6));
+			System.out.println(tlTitle);
+			System.out.println("-".repeat(30 + 1 + 10 + 1 + 22 + 1 + 14));
+			System.out.printf(tlHeaderFmt, "ID", "Employee", "Managers Between", "Excess By");
+			System.out.println("-".repeat(30 + 1 + 10 + 1 + 22 + 1 + 14));
 			if (tooLong.isEmpty()) {
 				System.out.println("None");
 			} else {
 				tooLong.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getId())).forEach(entry -> {
 					var e = entry.getKey();
 					int byHowMuch = entry.getValue();
-					System.out.printf("%s (id=%s): too long by %d%n", e.getFullName(), e.getId(), byHowMuch);
+					System.out.printf(tlRowFmt, e.getId(), e.getFullName(), byHowMuch + 4, byHowMuch);
 				});
 			}
 
