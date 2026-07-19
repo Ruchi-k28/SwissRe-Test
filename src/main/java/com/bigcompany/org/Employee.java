@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Employee {
+	private final String number;
 	private final String id;
 	private final String firstName;
 	private final String lastName;
@@ -12,12 +13,13 @@ public class Employee {
 	private final String managerId; 
 	private final List<Employee> directReports = new ArrayList<>();
 
-	public Employee(String id, String firstName, String lastName, double salary, String managerId) {
+	public Employee(String id, String firstName, String lastName, double salary, String managerId, String number) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.salary = salary;
 		this.managerId = managerId == null || managerId.isBlank() ? null : managerId.trim();
+		this.number=number;
 	}
 	// Chnages done
 	public String getId() {
